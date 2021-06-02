@@ -170,5 +170,27 @@
             android:tag="8" />
     </GridLayout>
 
+    <TextView
+        android:id="@+id/playerName"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="16dp"
+        android:text="@string/player_name"
+        android:textSize="20sp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toStartOf="@+id/playerTime"
+        app:layout_constraintStart_toStartOf="parent" />
+    <TextView
+        android:id="@+id/playerTime"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/player_time"
+        app:layout_constraintStart_toEndOf="@id/playerName"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:textSize="20sp"
+        android:layout_marginBottom="16dp"
+        />
+
 
 </androidx.constraintlayout.widget.ConstraintLayout>

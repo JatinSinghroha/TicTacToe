@@ -1,12 +1,15 @@
 package com.jatinsinghroha.tictactoe;
 
 import android.os.Bundle;
+import android.os.CountDownTimer;
 import android.util.Log;
 import android.view.View;
 import android.widget.GridLayout;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
+
+import java.util.Random;
 
 import androidx.appcompat.app.AppCompatActivity;
 import dev.shreyaspatil.MaterialDialog.MaterialDialog;
@@ -33,10 +36,19 @@ public class MainActivity extends AppCompatActivity {
     int filledGrids = 0;
     int scorePlayer1 = 0, scorePlayer2 = 0, scoreDraw = 0;
 
+    TextView playerName, playerTime;
+
+    int remainingTime = 20;
+
+    CountDownTimer mCountDownTimer;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        playerName = findViewById(R.id.playerName);
+        playerTime = findViewById(R.id.playerTime);
 
         mGridLayout = findViewById(R.id.gridLayout);
         mScoreGrid = findViewById(R.id.scoreGrid);
@@ -47,6 +59,8 @@ public class MainActivity extends AppCompatActivity {
         ImageView clickImageView = (ImageView) view;
 
         int index = Integer.parseInt(clickImageView.getTag().toString());
+
+
 
         //clickImageView.getTag().toString() == "4" = "231321" = 231321
 
@@ -60,12 +74,14 @@ public class MainActivity extends AppCompatActivity {
                 clickImageView.setImageResource(R.drawable.lion);
                 clickImageView.setAlpha(1.0f);
                 currentPlayer = Player.Two;
+                playerName.setText(getResources().getString(R.string.player_name, 2));
             }
             else{
                 gridPositions[index] = Player.Two;
                 clickImageView.setImageResource(R.drawable.tiger);
                 clickImageView.setAlpha(1.0f);
                 currentPlayer = Player.One;
+                playerName.setText(getResources().getString(R.string.player_name, 1));
             }
             filledGrids++;
 
@@ -84,7 +100,6 @@ public class MainActivity extends AppCompatActivity {
                     Log.e("winnerRow", winnerRow[0]+ "," + winnerRow[1] +","+ winnerRow[2]+" - "+winner);
                     if(gridPositions[winnerRow[0]] == gridPositions[winnerRow[1]] &&
                             gridPositions[winnerRow[1]] == gridPositions[winnerRow[2]] && gridPositions[winnerRow[0]] != Player.No){
-
                         if(currentPlayer == Player.One){
                             winner = "Tiger - Player 2";
                             displayOnResult("Player 2 Won",
@@ -101,6 +116,10 @@ public class MainActivity extends AppCompatActivity {
                         }
                         gameOver = true;
                         Log.e("winnerRow", winnerRow[0]+ "," + winnerRow[1] +","+ winnerRow[2]+" - "+winner);
+                        if(mCountDownTimer!=null){
+                            mCountDownTimer.cancel();
+                            mCountDownTimer = null;
+                        }
                         break;
                     }
                 }
@@ -110,6 +129,19 @@ public class MainActivity extends AppCompatActivity {
                 gameOver = true;
                 displayOnResult("Game is Drawn"
                         , "No one have won the game.\nTry Again.", R.raw.draw, 0);
+                if(mCountDownTimer!=null){
+                    mCountDownTimer.cancel();
+                    mCountDownTimer = null;
+                }
+            }
+
+            if(!gameOver && filledGrids < 9){
+                remainingTime = 20;
+                if(mCountDownTimer!=null){
+                    mCountDownTimer.cancel();
+                    mCountDownTimer = null;
+                }
+                setTimer(remainingTime);
             }
         }
         else{
@@ -167,16 +199,60 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void resetEverything(){
+        remainingTime = 20;
         gameOver = false;
         filledGrids = 0;
         currentPlayer = Player.One;
 
+        playerName.setText(getResources().getString(R.string.player_name, 1));
+        playerTime.setText(getResources().getString(R.string.player_time, remainingTime));
+
+        if(mCountDownTimer !=null){
+            mCountDownTimer.cancel();
+            mCountDownTimer = null;
+            setTimer(remainingTime);
+        }
         for(int i=0; i<9; i++) {
             gridPositions[i] = Player.No;
 
             ImageView imageView = (ImageView) mGridLayout.getChildAt(i);
             imageView.setAlpha(0.2f);
             imageView.setImageDrawable(null);
+        }
+    }
+
+    private void setTimer(int duration){
+        mCountDownTimer = new CountDownTimer(duration * 1000, 1000) {
+            @Override
+            public void onTick(long millisUntilFinished) {
+                remainingTime--;
+                playerTime.setText(getResources().getString(R.string.player_time, remainingTime));
+            }
+
+            @Override
+            public void onFinish() {
+                makeAutomaticMove();
+            }
+        };
+
+        mCountDownTimer.start();
+    }
+
+    private void makeAutomaticMove(){
+
+        boolean isValid = false;
+
+        while(!isValid){
+            //it will return a value between 0 and 8
+            int index = new Random().nextInt(9);
+            Log.e("indexValue", index + "");
+
+            if(gridPositions[index] == Player.No){
+                isValid = true;
+
+                ImageView imageView = (ImageView) mGridLayout.getChildAt(index);
+                onTapImage(imageView);
+            }
         }
     }
 }
