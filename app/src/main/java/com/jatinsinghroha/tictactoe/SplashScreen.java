@@ -27,8 +27,11 @@ public class SplashScreen extends AppCompatActivity {
 
             @Override
             public void onAnimationEnd(Animator animation) {
-                Intent intent = new Intent(SplashScreen.this, MainActivity.class);
-                startActivity(intent);
+                Intent myIntent = new Intent(SplashScreen.this, IndianStatesAPIExample.class);
+                myIntent.putExtra("isComingFromSplash", true);
+                myIntent.putExtra("myAge", 23);
+                myIntent.putExtra("myName", "Jatin");
+                startActivity(myIntent);
                 finish();
             }
 

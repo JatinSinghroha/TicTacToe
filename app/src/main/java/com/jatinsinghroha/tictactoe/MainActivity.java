@@ -47,6 +47,9 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+        boolean isComingFromSplash = getIntent().getBooleanExtra("isComingFromSplash", true);
+        Toast.makeText(this, isComingFromSplash + "", Toast.LENGTH_LONG).show();
+
         playerName = findViewById(R.id.playerName);
         playerTime = findViewById(R.id.playerTime);
 
@@ -239,17 +242,13 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void makeAutomaticMove(){
-
         boolean isValid = false;
-
         while(!isValid){
             //it will return a value between 0 and 8
             int index = new Random().nextInt(9);
-            Log.e("indexValue", index + "");
-
+            Log.e("indexDebug", index+"");
             if(gridPositions[index] == Player.No){
                 isValid = true;
-
                 ImageView imageView = (ImageView) mGridLayout.getChildAt(index);
                 onTapImage(imageView);
             }
